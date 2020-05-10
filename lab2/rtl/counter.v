@@ -17,12 +17,20 @@ dff dff_leds(
   .q_o     ( ledr_o )
  );
 
+wire bwp;
+Debounce deb(
+ .clk_i        ( clk100_i ),
+ .rst_i        ( key_i[1] ),
+ .en_i         ( !key_i[0] ),
+ .en_down_o    ( bwp ) 
+);
+
  reg [7:0] counter;
  always@( posedge clk100_i or negedge key_i[1] )
    begin
    if( !key_i[1] ) counter <= 0;
    else
-    if( !key_i[0] ) counter <= counter + 1;
+    if( bwp ) counter <= counter + 1;
    end
  
 
