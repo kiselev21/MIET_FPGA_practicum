@@ -17,30 +17,12 @@ dff dff_leds(
   .q_o     ( ledr_o )
  );
 
-reg sw_event;
-always @( sw_i )
-begin
-  if (( sw_i[0]+sw_i[1]+sw_i[2]+sw_i[3]+sw_i[4]+sw_i[5]+sw_i[6]+sw_i[7]+sw_i[8]+sw_i[9] )> 4'd3)  sw_event <= 1'b1; 
-  else sw_event <= 1'b0;
-end 
-
-reg [2:0] event_sync_reg; 
- wire bwp;
- always @( posedge clk100_i )
-   begin
-    event_sync_reg[0] <= key_i[0]; 
-    event_sync_reg[1] <= event_sync_reg[0]; 
-    event_sync_reg[2] <= event_sync_reg[1]; 
-   end
- assign bwp =~event_sync_reg[2]& event_sync_reg[1]; 
- 
-
  reg [7:0] counter;
  always@( posedge clk100_i or negedge key_i[1] )
    begin
    if( !key_i[1] ) counter <= 0;
    else
-    if( bwp & sw_event ) counter <= counter + 1;
+    if( !key_i[0] ) counter <= counter + 1;
    end
  
 
