@@ -2,15 +2,15 @@
 
 module counter(
   input              clk100_i,
-  input      [9:0]   sw_i,
+  input      [13:0]  sw_i,
   input      [1:0]   key_i,
-  output     [9:0]   ledr_o,
+  output     [13:0]  ledr_o,
   output reg [6:0]   hex1_o,
   output reg [6:0]   hex0_o
 );
 
 dff dff_leds(
-  .data_i  ( sw_i[9:0] ),
+  .data_i  ( sw_i[13:0] ),
   .clk_i   ( clk100_i ),
   .rstn_i  ( key_i[1] ),
   .en_i    ( key_i[0] ),
@@ -19,18 +19,19 @@ dff dff_leds(
 
 wire bwp;
 Debounce deb(
- .clk_i        ( clk100_i ),
- .rst_i        ( key_i[1] ),
- .en_i         ( !key_i[0] ),
- .en_down_o    ( bwp ) 
+  .clk_i        ( clk100_i ),
+  .rst_i        ( key_i[1] ),
+  .en_i         ( !key_i[0] ),
+  .en_down_o    ( bwp ) 
 );
 
  reg [7:0] counter;
+ 
  always@( posedge clk100_i or negedge key_i[1] )
    begin
    if( !key_i[1] ) counter <= 0;
    else
-    if( bwp ) counter <= counter + 1;
+    if( bwp ) counter <= counter + sw_i[13:10];
    end
  
 
@@ -55,7 +56,8 @@ Debounce deb(
        4'd14:  hex0_o = 7'b0000110;
        4'd15:  hex0_o = 7'b0001110; 
       endcase
-  end
+   end
+   
  always @( posedge clk100_i or negedge key_i[1] ) 
    begin
      if( !key_i[1] ) hex1_o = 7'b1000000;   
@@ -77,6 +79,6 @@ Debounce deb(
        4'd14:  hex1_o = 7'b0000110;
        4'd15:  hex1_o = 7'b0001110; 
       endcase
-  end
+   end
 
 endmodule

@@ -1,11 +1,10 @@
 `timescale 1ns / 1ps
 
 module Debounce(
-input         clk_i,
-input         rst_i,
-input         en_i, 
-output        en_down_o
-
+  input         clk_i,
+  input         rst_i,
+  input         en_i, 
+  output        en_down_o
     );
 
 reg [1:0] sync;
